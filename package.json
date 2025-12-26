@@ -1,0 +1,31 @@
+{
+  "name": "form-storage",
+  "version": "0.90.0",
+  "description": "Small library for HTML forms serializing, autosaving and storing them in localStorage",
+  "keywords": [
+    "javascript",
+    "html",
+    "form",
+    "forms",
+    "serialization",
+    "autosave"
+  ],
+  "homepage": "https://github.com/XXXXPro/FormSerializer#readme",
+  "bugs": {
+    "url": "https://github.com/XXXXPro/FormSerializer/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XXXXPro/FormSerializer.git"
+  },
+  "license": "MIT",
+  "author": "4X_Pro",
+  "type": "commonjs",
+  "main": "form-storage.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WYSIWYG editor example for FormStorage</title>
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />  
+  <style>
+    html, body { margin:0; padding: 0; height: 100% }
+    header { align-items: center; border-bottom: 1px solid var(--color-divider, #EFEFEF); position: fixed; background: #fff; width: 100%; z-index: 65000 }
+    main { }
+    form input[type="text"], form input[type="email"], form input[type="password"], form input[type="number"], form input[type="date"], form textarea, form select {
+        padding: 5px 6px;
+        border-radius: 3px;
+        border-style: solid;
+        border-width: 1px;
+        margin: 4px;
+        box-sizing: border-box;
+    }    
+    .flex { display: flex; }
+    .separator { flex-grow: 100 }
+    .container { max-width: 1024px; margin: auto; padding: 10px; width: 100%; box-sizing: border-box; }
+    #btn_save { padding: 0 2px; margin: 0; border: 0; background-color: #5B41F5; color: #fff; border-radius: 50%;}
+    .quill_full_editor.ql-container.ql-snow  { height: 100%; overflow: auto; border: 0}
+    #outer-toolbar{ border-bottom: 1px solid #ccc;}
+    #quill-toolbar { border: 0; padding: 0 }
+
+    .pseudo_comment { display: none }
+    #topic_title { width: 100%;  font-size: 2em;  border: none; box-sizing: border-box; margin: 0.67em 0 }
+
+@media screen and (max-width: 480px) {
+  .no-mobile { display: none !important }
+}
+  </style>
+</head>
+<body>
+<main>
+  <div class="container">
+    <form action="#sent" method="POST" id="post_form">
+    <input type="hidden" name="post[text]" />
+    <div class="flex" style="justify-content: space-between;">
+    <div>
+      <input type="text" name="title" placeholder="Topic title" size="40" /><br />
+      <input type="date" name="postdate" placeholder="Publication date" value="2026-01-01"/><br />
+      <label>Some number: <input type="number" name="number" min="3" max="99" value="42" /></label><br />
+    </div><div>
+      <label><input type="checkbox" name="options[]" value="html" checked> Allow HTML</label><br />
+      <label><input type="checkbox" name="options[]" value="bbcode"> Allow BBCode</label><br />
+      <label><input type="checkbox" name="options[]" value="emoji" checked> Allow emoji</label><br />
+    </div>
+
+    <div>
+      <label>Category:<br />
+      <select name="category[]" multiple="1">
+        <option value="js">JavaScript programming</option>
+        <option value="server">Server configuration</option>
+        <option value="usability">Usability</option>
+        <option value="seo">SEO</option>
+      </select>
+    </div><div>  
+      Status:<br />
+      <label><input type="radio" name="state" value="draft" checked> Draft</label><br />
+      <label><input type="radio" name="state" value="published"> Published</label><br />
+      <label><input type="radio" name="state" value="review"> Needs review</label><br />
+    </div>
+    </div>  
+
+<div id="outer-toolbar">
+  <div class="container">
+    <div id="quill-toolbar">
+<!--      <span class="ql-formats">
+        <select class="ql-font"></select>
+        <select class="ql-size"></select>
+      </span> -->
+      <span class="ql-formats">
+        <button class="ql-bold"></button>
+        <button class="ql-italic"></button>
+        <button class="ql-underline"></button>
+        <button class="ql-strike"></button>
+      </span>
+      <span class="ql-formats no-mobile">
+        <select class="ql-color"></select>
+        <select class="ql-background"></select>
+      </span>
+      <span class="ql-formats no-mobile">
+        <button class="ql-script" value="sub"></button>
+        <button class="ql-script" value="super"></button>
+      </span>
+      <span class="ql-formats">
+        <button class="ql-header" value="2"></button>
+        <button class="ql-header" value="3"></button>
+        <button class="ql-blockquote"></button>
+        <button class="ql-code-block"></button>
+      </span>
+      <span class="ql-formats">
+        <button class="ql-list" value="ordered"></button>
+        <button class="ql-list" value="bullet"></button>
+        <button class="ql-indent" value="-1"></button>
+        <button class="ql-indent" value="+1"></button>
+      </span>
+      <span class="ql-formats">
+<!--        <button class="ql-direction" value="rtl"></button> -->
+        <select class="ql-align"></select>
+      </span>
+      <span class="ql-formats">
+        <button class="ql-link"></button>
+        <button class="ql-image"></button>
+        <button class="ql-video"></button>
+      </span>
+      <span class="ql-formats">
+        <button class="ql-clean"></button>
+      </span>
+    </div>
+  </div>
+</div>      
+
+    <div class="quill_full_editor">
+      <p>Hello World!</p>
+      <p>This is sample Quill edit field to show how FormStorage can deal with WYSIWYG editors</p>
+      <p>Some initial <strong>bold</strong> text</p>
+      <code>console.log("Hello World!");</code>
+    </div>
+
+    <input type="hidden" name="id" value=""></div>
+    </form>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<script src="../src/form-storage.js"></script>
+
+<script>
+  const quill = new Quill('.quill_full_editor', {
+  modules: {
+    toolbar: "#quill-toolbar",    
+    history: {
+      delay: 2000,
+      maxStack: 500,
+      userOnly: true
+    },
+  },    
+    theme: 'snow',
+    placeholder: 'Time to write blog posts…',
+  });
+
+let frm_elm = document.getElementById('post_form');
+// We will skip autoloading because of we need to add onLoad hook. So we call fstor.load() later explicitly.
+let fstor = new FormStorage(frm_elm,{storage_key: 'TestPageKey', headers : { 'Accept' : 'application/json' }, skip_autoloading : true});
+
+fstor.onLoad = function(data) {
+  // Putting initial content into WYSIWYG editor 
+  if ('post[text]' in data) quill.root.innerHTML=data['post[text]'];
+}
+fstor.onSave = function(data) {
+  // fetching HTML code from WYSIWYG editor 
+  data['post[text]']=quill.getSemanticHTML();
+}
+fstor.onDecodeError = function(data,error) {
+  console.error('Unable to unserialze data: ');
+  console.log(data);
+  console.log(error);
+}
+fstor.load();
+</script>
+
+</main>
+</body>
+</html>
