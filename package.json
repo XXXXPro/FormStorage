@@ -1,6 +1,6 @@
 {
   "name": "form-storage-submitter",
-  "version": "0.90.0",
+  "version": "0.90.1",
   "description": "Small library for HTML forms serializing, autosaving, storing them in localStorage and autoclearing after AJAX submit.",
   "keywords": [
     "javascript",
