@@ -90,6 +90,7 @@ modules: {
 });
 
 const postform = document.getElementById('postform');
+// Отключаем автозагрузку, потому что нужно сначала установить хук onLoad. Потом явно вызовем fstor.load()
 const fstor = new FormStorage(postform, 'FormStorage_draft', { 'Accept': 'application/json' });
 
 fstor.onLoad = function(data) { // override the onLoad hook
@@ -100,4 +101,5 @@ fstor.onBeforeSave = function() { // override the onBeforeSave hook
   // Save the editor's HTML content to the corresponding form field
   document.querySelector('[name="post[text]"]').value = quill.getSemanticHTML();
 }
+fstor.load();
 ```

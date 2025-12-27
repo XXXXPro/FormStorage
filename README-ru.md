@@ -91,7 +91,8 @@ modules: {
 });
 
 const postform = documemt.getElementById('postform');
-const fstor = new FormStorage(postform,'FormStorage_draft',{ 'Accept' : 'application/json' });
+// We will skip autoloading because of we need to add onLoad hook. So we call fstor.load() later explicitly.
+const fstor = new FormStorage(postform,'FormStorage_draft',headers : { 'Accept' : 'application/json' }, skip_autoloading : true});
 
 fstor.onLoad = function(data) { // переопределяем хук onLoad
   if ('post[text]' in data) quill.root.innerHTML=data['post[text]'];
@@ -100,4 +101,6 @@ fstor.onLoad = function(data) { // переопределяем хук onLoad
 fstor.onBeforeSave = function(data) { // переопределяем хук onBeforeSave
   data['post[text]']=quill.getSemanticHTML();
 }
+
+fstor.load();
 ```
